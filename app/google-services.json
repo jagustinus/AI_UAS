@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "730475000199",
+    "firebase_url": "https://ai---uas.firebaseio.com",
+    "project_id": "ai---uas",
+    "storage_bucket": "ai---uas.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:730475000199:android:1f0e78adbd1ffd8230e322",
+        "android_client_info": {
+          "package_name": "com.example.app.ai_uas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "730475000199-jqrcr92lgl3evp7to5hs6pnt8n41vr87.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4wyuLGoK95vsvZolwpHK6hlTv3qseYR8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "730475000199-jqrcr92lgl3evp7to5hs6pnt8n41vr87.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
