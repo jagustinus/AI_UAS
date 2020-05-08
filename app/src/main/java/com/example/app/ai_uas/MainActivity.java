@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button btnSearchByScan;
     Button btnDetectText;
-
+    private TextView textTranslate;
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private RecyclerView rvBooks;
@@ -179,8 +180,8 @@ public class MainActivity extends AppCompatActivity {
         for (FirebaseVisionText.TextBlock block : text.getTextBlocks()) {
             String txt = block.getText();
 //            IKI GAWE NGEMUNCULNO TULISAN E
-//            txtView.setTextSize(24);
-//            txtView.setText(txt);
+            textTranslate.setTextSize(18);
+            textTranslate.setText(txt);
         }
     }
 
