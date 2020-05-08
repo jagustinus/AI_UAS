@@ -1,15 +1,23 @@
 package com.example.app.ai_uas;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.example.app.ai_uas.fragment.ProfileFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.w3c.dom.Text;
 
@@ -24,6 +32,7 @@ public class LoginRegsiterActivity extends AppCompatActivity {
     //register
     EditText firstnamereg, middlenamereg, lastnamereg, facultyreg, yearreg, usernamereg, passwordreg;
     FirebaseAuth firebaseAuth;
+    FirebaseFirestore database;
     ProgressBar progressBarlogin, progressBarregister;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +55,14 @@ public class LoginRegsiterActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
+        database = FirebaseFirestore.getInstance();
+
         progressBarlogin = findViewById(R.id.loginprogressBar);
         progressBarregister = findViewById(R.id.registerprogressBar);
+
+        if(firebaseAuth.getCurrentUser() != null){
+            startActivity(new Intent(getApplicationContext(), ProfileFragment.class));
+        }
 
         loginbutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,11 +75,14 @@ public class LoginRegsiterActivity extends AppCompatActivity {
                     return;
                 }
                 if(TextUtils.isEmpty(passwordusername)){
-                    passwordlogin.setError("PasswordRequired")
+                    passwordlogin.setError("PasswordRequired");
                     return;
                 }
 
                 progressBarlogin.setVisibility(View.VISIBLE);
+
+
+
             }
         });
         registerbutton.setOnClickListener(new View.OnClickListener() {
@@ -102,12 +120,28 @@ public class LoginRegsiterActivity extends AppCompatActivity {
 
                 progressBarregister.setVisibility(View.VISIBLE);
 
+                firebaseAuth.createUserWithEmailAndPassword(addusername, addpassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()) {
+                            Toast.makeText(LoginRegsiterActivity.this, "User Created", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(getApplicationContext(), ProfileFragment.class));
+                        }else {
+                            Toast.makeText(LoginRegsiterActivity.this, "Error" + task.getException().getMessage(), Toast.LENGTH_SHORT ).show();
+                        }
+                    }
+                });
+
                 Map<String, Object> user = new HashMap<>();
                 user.put("firstname", firstname);
                 user.put("middlename", middlename);
                 user.put("lastname", lastname);
                 user.put("faculty", faculty);
-                user.put("angkatan", lastname);
+                user.put("angkatan", year);
+                user.put("username", addusername);
+                user.put("password", addpassword);
+
+
 
 
             }
