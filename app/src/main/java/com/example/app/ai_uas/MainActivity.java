@@ -1,22 +1,22 @@
 package com.example.app.ai_uas;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app.ai_uas.fragment.BookFragment;
 import com.example.app.ai_uas.fragment.HistoryFragment;
@@ -24,13 +24,14 @@ import com.example.app.ai_uas.fragment.HomeFragment;
 import com.example.app.ai_uas.fragment.ProfileFragment;
 import com.example.app.ai_uas.model.Book;
 import com.example.app.ai_uas.recyclerview.BookAdapter;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.text.FirebaseVisionText;
+import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView rvBooks;
     private BookAdapter bookAdapter;
     private List<Book> mdata;
+    private Bitmap imageBitmap;
+    private ImageView imageView;
 
     //Firebase
     FirebaseFirestore fstore;
@@ -63,12 +66,12 @@ public class MainActivity extends AppCompatActivity {
         setupBookAdapter();
 
         btnSearchByScan = findViewById(R.id.home_btn_scan);
-//        btnSearchByScan.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
+        btnSearchByScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dispatchTakePictureIntent();
+            }
+        });
 
         botNav = findViewById(R.id.bottom_nav_container);
         botNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -118,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
         botNav.setSelectedItemId(R.id.home_menu_item_bottom_nav);
     }
 
+
     private void dispatchTakePictureIntent(){
         Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if(takePicture.resolveActivity(getPackageManager()) != null) {
@@ -125,14 +129,50 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult( requestCode, resultCode, data );
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            imageBitmap = (Bitmap) extras.get( "data" );
+            imageView.setImageBitmap( imageBitmap );
+        }
+    }
 
     private void setupBookAdapter(){
         bookAdapter = new BookAdapter(mdata);
         rvBooks.setAdapter(bookAdapter);
+    }
+
+    private void detectTxt() {
+        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(imageBitmap);
+        FirebaseVisionTextRecognizer Detector = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
+
+        detector.detectInImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+            @Override
+            public void onSuccess(FirebaseVisionText firebaseVisionText) {
+                processTxt(firebaseVisionText);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
+
+    private void processTxt(FirebaseVisionText text) {
+        List<FirebaseVisionText.TextBlock> blocks = text.getTextBlocks();
+        if (blocks.size() == 0) {
+            Toast.makeText(MainActivity.this, "No Text :(", Toast.LENGTH_LONG).show();
+            return;
+        }
+        for (FirebaseVisionText.TextBlock block : text.getTextBlocks()) {
+            String txt = block.getText();
+//            IKI GAWE NGEMUNCULNO TULISAN E
+//            txtView.setTextSize(24);
+//            txtView.setText(txt);
+        }
     }
 
     private void initMDataBooks(){
