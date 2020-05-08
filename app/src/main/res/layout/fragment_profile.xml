@@ -128,7 +128,7 @@
         app:layout_constraintTop_toBottomOf="@+id/myusername" />
 
     <TextView
-        android:id="@+id/faculty2"
+        android:id="@+id/tabelfaculty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -139,24 +139,24 @@
         app:layout_constraintTop_toBottomOf="@+id/tabelangkatan" />
 
     <TextView
-        android:id="@+id/tabelfaculty"
+        android:id="@+id/myfaculty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="Fakultas"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/faculty2"
+        app:layout_constraintStart_toEndOf="@+id/tabelfaculty"
         app:layout_constraintTop_toBottomOf="@+id/tahunangkatan" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/logoutbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Log Out"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/faculty2" />
+        app:layout_constraintTop_toBottomOf="@+id/tabelfaculty" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

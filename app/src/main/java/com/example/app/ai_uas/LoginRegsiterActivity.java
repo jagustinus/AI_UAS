@@ -80,6 +80,19 @@ public class LoginRegsiterActivity extends AppCompatActivity {
                 }
 
                 progressBarlogin.setVisibility(View.VISIBLE);
+                firebaseAuth.signInWithEmailAndPassword(loginusername, passwordusername).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()) {
+                            Toast.makeText(LoginRegsiterActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getApplicationContext(), ProfileFragment.class);
+                            startActivity(intent);
+
+                        }else {
+                            Toast.makeText(LoginRegsiterActivity.this, "Error" + task.getException().getMessage(), Toast.LENGTH_SHORT ).show();
+                        }
+                    }
+                });
 
 
 
@@ -125,7 +138,9 @@ public class LoginRegsiterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()) {
                             Toast.makeText(LoginRegsiterActivity.this, "User Created", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(getApplicationContext(), ProfileFragment.class));
+                            Intent intent = new Intent(getApplicationContext(), ProfileFragment.class);
+                            startActivity(intent);
+
                         }else {
                             Toast.makeText(LoginRegsiterActivity.this, "Error" + task.getException().getMessage(), Toast.LENGTH_SHORT ).show();
                         }
