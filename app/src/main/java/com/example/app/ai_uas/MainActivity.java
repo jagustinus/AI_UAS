@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView botNav;
 
     Button btnSearchByScan;
+    Button btnDetectText;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -66,12 +67,20 @@ public class MainActivity extends AppCompatActivity {
         setupBookAdapter();
 
         btnSearchByScan = findViewById(R.id.home_btn_scan);
+        btnDetectText = findViewById( R.id.home_btn_scan );
         btnSearchByScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dispatchTakePictureIntent();
             }
         });
+        btnDetectText.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                detectTxt();
+            }
+        } );
+
 
         botNav = findViewById(R.id.bottom_nav_container);
         botNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
