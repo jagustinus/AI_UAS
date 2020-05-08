@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(imageBitmap);
         FirebaseVisionTextRecognizer Detector = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
 
-        detector.detectInImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+        Detector.processImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
             @Override
             public void onSuccess(FirebaseVisionText firebaseVisionText) {
                 processTxt(firebaseVisionText);
