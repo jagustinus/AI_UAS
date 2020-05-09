@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,9 +15,12 @@ import android.widget.Toast;
 
 import com.example.app.ai_uas.fragment.ProfileFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.w3c.dom.Text;
@@ -26,6 +30,7 @@ import java.util.Map;
 
 public class LoginRegsiterActivity extends AppCompatActivity {
 
+    public static final String TAG = "TAG";
     Button loginbutton, registerbutton;
     //login
     EditText usernamelogin, passwordlogin;
@@ -34,6 +39,7 @@ public class LoginRegsiterActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     FirebaseFirestore database;
     ProgressBar progressBarlogin, progressBarregister;
+    String userID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,11 +60,13 @@ public class LoginRegsiterActivity extends AppCompatActivity {
         passwordreg = findViewById(R.id.regpassword);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        database = FirebaseFirestore.getInstance();
 
         database = FirebaseFirestore.getInstance();
 
         progressBarlogin = findViewById(R.id.loginprogressBar);
         progressBarregister = findViewById(R.id.registerprogressBar);
+
 
         if(firebaseAuth.getCurrentUser() != null){
             startActivity(new Intent(getApplicationContext(), ProfileFragment.class));
@@ -80,6 +88,7 @@ public class LoginRegsiterActivity extends AppCompatActivity {
                 }
 
                 progressBarlogin.setVisibility(View.VISIBLE);
+
                 firebaseAuth.signInWithEmailAndPassword(loginusername, passwordusername).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -87,12 +96,13 @@ public class LoginRegsiterActivity extends AppCompatActivity {
                             Toast.makeText(LoginRegsiterActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getApplicationContext(), ProfileFragment.class);
                             startActivity(intent);
-
                         }else {
                             Toast.makeText(LoginRegsiterActivity.this, "Error" + task.getException().getMessage(), Toast.LENGTH_SHORT ).show();
                         }
                     }
                 });
+
+
 
 
 
@@ -102,13 +112,13 @@ public class LoginRegsiterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //register
-                String firstname = firstnamereg.getText().toString().trim();
-                String middlename = middlenamereg.getText().toString().trim();
-                String lastname = lastnamereg.getText().toString().trim();
-                String faculty = facultyreg.getText().toString().trim();
-                String year = yearreg.getText().toString().trim();
-                String addusername = usernamereg.getText().toString().trim();
-                String addpassword = passwordreg.getText().toString().trim();
+                final String firstname = firstnamereg.getText().toString().trim();
+                final String middlename = middlenamereg.getText().toString().trim();
+                final String lastname = lastnamereg.getText().toString().trim();
+                final String faculty = facultyreg.getText().toString().trim();
+                final String year = yearreg.getText().toString().trim();
+                final String addusername = usernamereg.getText().toString().trim();
+                final String addpassword = passwordreg.getText().toString().trim();
 
                 if(TextUtils.isEmpty(firstname)){
                     firstnamereg.setError("First Name Required");
@@ -138,6 +148,27 @@ public class LoginRegsiterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()) {
                             Toast.makeText(LoginRegsiterActivity.this, "User Created", Toast.LENGTH_SHORT).show();
+                            //userID = firebaseAuth.getCurrentUser().getUid();
+                            //DocumentReference documentReference = database.collection("users").document(userID);
+                            //Map<String, Object> user = new HashMap<>();
+                            //user.put("first", firstname);
+                            //user.put("middle", middlename);
+                            //user.put("last", lastname);
+                            //user.put("FIT", faculty);
+                            //user.put("angkatan", year);
+                            //user.put("username", addusername);
+                            //user.put("password", addpassword);
+                            //documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                //@Override
+                                //public void onSuccess(Void aVoid) {
+                                    //Log.d(TAG, "onSuccess: " + userID);
+                                //}
+                            //}).addOnFailureListener(new OnFailureListener() {
+                                //@Override
+                                //public void onFailure(@NonNull Exception e) {
+                                    //Log.d(TAG, "onFailure: " + e.toString());
+                                //}
+                            //});
                             Intent intent = new Intent(getApplicationContext(), ProfileFragment.class);
                             startActivity(intent);
 
@@ -147,14 +178,6 @@ public class LoginRegsiterActivity extends AppCompatActivity {
                     }
                 });
 
-                Map<String, Object> user = new HashMap<>();
-                user.put("firstname", firstname);
-                user.put("middlename", middlename);
-                user.put("lastname", lastname);
-                user.put("faculty", faculty);
-                user.put("angkatan", year);
-                user.put("username", addusername);
-                user.put("password", addpassword);
 
 
 
