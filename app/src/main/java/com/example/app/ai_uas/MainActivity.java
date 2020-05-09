@@ -69,12 +69,14 @@ public class MainActivity extends AppCompatActivity {
 
         btnSearchByScan = findViewById(R.id.home_btn_scan);
         btnDetectText = findViewById( R.id.home_btn_scan );
+
         btnSearchByScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dispatchTakePictureIntent();
             }
         });
+
         btnDetectText.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
