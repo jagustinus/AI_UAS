@@ -21,6 +21,7 @@ import com.example.app.ai_uas.R;
 public class ProfileFragment extends Fragment {
     Button Signoutbutton;
     TextView Usernametv, Firstnametv, Middlenametv, Lastnametv, Facultytv, Yeartv;
+    /*
     private String Username;
     private String FirstName;
     private String MiddleName;
@@ -28,17 +29,15 @@ public class ProfileFragment extends Fragment {
     private String Faculty;
     private String Year;
 
-    public ProfileFragment(String Username, String FirstName, String MiddleName, String LastName, String Faculty, String Year) {
+     */
+
+    public ProfileFragment() {
         // Required empty public constructor
-        this.Username = Username;
-        this.FirstName = FirstName;
-        this.MiddleName = MiddleName;
-        this.LastName = LastName;
-        this.Faculty = Faculty;
-        this.Year = Year;
 
     }
 
+
+    /*
     public String getUsername(){
         return Username;
     }
@@ -57,6 +56,8 @@ public class ProfileFragment extends Fragment {
     public String getYear(){
         return Year;
     }
+
+     */
 
 
     @Override
