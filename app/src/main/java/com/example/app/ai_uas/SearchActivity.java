@@ -24,11 +24,9 @@ import java.util.List;
 
 public class SearchActivity extends AppCompatActivity {
 
-    Button btnSearchByScan;
-    Button btnDetectText;
+    private Button btnSearchByScan;
+    private Button btnDetectText;
     private TextView textTranslate;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-
     private Bitmap imageBitmap;
     private ImageView imageView;
 
@@ -36,13 +34,18 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.fragment_home );
+
+        textTranslate = findViewById(R.id.home_text_translate);
         btnSearchByScan = findViewById(R.id.home_btn_scan);
-        btnDetectText = findViewById( R.id.home_btn_scan );
+        btnDetectText = findViewById( R.id.home_btn_detect );
+        imageView = findViewById(R.id.imageView);
 
         btnSearchByScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dispatchTakePictureIntent();
+                System.out.println("ASHIAP BANG ATTA");
+
             }
         });
 
@@ -52,9 +55,8 @@ public class SearchActivity extends AppCompatActivity {
                 detectTxt();
             }
         } );
-
-
     }
+    static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private void dispatchTakePictureIntent(){
         Intent takePicture = new Intent( MediaStore.ACTION_IMAGE_CAPTURE);
@@ -80,7 +82,20 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-    private void processTxt(FirebaseVisionText text) {
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult( requestCode, resultCode, data );
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            imageBitmap = (Bitmap) extras.get( "data" );
+            imageView.setImageBitmap( imageBitmap );
+        }
+    }
+
+
+    public void processTxt(FirebaseVisionText text) {
+
         List<FirebaseVisionText.TextBlock> blocks = text.getTextBlocks();
         if (blocks.size() == 0) {
             Toast.makeText(SearchActivity.this, "No Text :(", Toast.LENGTH_LONG).show();

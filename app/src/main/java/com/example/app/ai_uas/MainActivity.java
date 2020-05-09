@@ -3,7 +3,6 @@ package com.example.app.ai_uas;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -126,12 +125,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void dispatchTakePictureIntent(){
-        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if(takePicture.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE); // Error?
-        }
-    }
+//    private void dispatchTakePictureIntent(){
+//        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        if(takePicture.resolveActivity(getPackageManager()) != null) {
+//            startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE); // Error?
+//        }
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
