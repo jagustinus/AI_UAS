@@ -5,11 +5,9 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,14 +23,8 @@ import com.example.app.ai_uas.fragment.HomeFragment;
 import com.example.app.ai_uas.fragment.ProfileFragment;
 import com.example.app.ai_uas.model.Book;
 import com.example.app.ai_uas.recyclerview.BookAdapter;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.ml.vision.FirebaseVision;
-import com.google.firebase.ml.vision.common.FirebaseVisionImage;
-import com.google.firebase.ml.vision.text.FirebaseVisionText;
-import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,22 +59,22 @@ public class MainActivity extends AppCompatActivity {
         initMDataBooks();
         setupBookAdapter();
 
-        btnSearchByScan = findViewById(R.id.home_btn_scan);
-        btnDetectText = findViewById( R.id.home_btn_scan );
-
-        btnSearchByScan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dispatchTakePictureIntent();
-            }
-        });
-
-        btnDetectText.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                detectTxt();
-            }
-        } );
+//        btnSearchByScan = findViewById(R.id.home_btn_scan);
+//        btnDetectText = findViewById( R.id.home_btn_scan );
+//
+//        btnSearchByScan.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                dispatchTakePictureIntent();
+//            }
+//        });
+//
+//        btnDetectText.setOnClickListener( new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                detectTxt();
+//            }
+//        } );
 
 
         botNav = findViewById(R.id.bottom_nav_container);
@@ -156,36 +148,36 @@ public class MainActivity extends AppCompatActivity {
         rvBooks.setAdapter(bookAdapter);
     }
 
-    private void detectTxt() {
-        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(imageBitmap);
-        FirebaseVisionTextRecognizer Detector = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
-
-        Detector.processImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
-            @Override
-            public void onSuccess(FirebaseVisionText firebaseVisionText) {
-                processTxt(firebaseVisionText);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-            }
-        });
-    }
-
-    private void processTxt(FirebaseVisionText text) {
-        List<FirebaseVisionText.TextBlock> blocks = text.getTextBlocks();
-        if (blocks.size() == 0) {
-            Toast.makeText(MainActivity.this, "No Text :(", Toast.LENGTH_LONG).show();
-            return;
-        }
-        for (FirebaseVisionText.TextBlock block : text.getTextBlocks()) {
-            String txt = block.getText();
-//            IKI GAWE NGEMUNCULNO TULISAN E
-            textTranslate.setTextSize(18);
-            textTranslate.setText(txt);
-        }
-    }
+//    private void detectTxt() {
+//        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(imageBitmap);
+//        FirebaseVisionTextRecognizer Detector = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
+//
+//        Detector.processImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+//            @Override
+//            public void onSuccess(FirebaseVisionText firebaseVisionText) {
+//                processTxt(firebaseVisionText);
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//
+//            }
+//        });
+//    }
+//
+//    private void processTxt(FirebaseVisionText text) {
+//        List<FirebaseVisionText.TextBlock> blocks = text.getTextBlocks();
+//        if (blocks.size() == 0) {
+//            Toast.makeText(MainActivity.this, "No Text :(", Toast.LENGTH_LONG).show();
+//            return;
+//        }
+//        for (FirebaseVisionText.TextBlock block : text.getTextBlocks()) {
+//            String txt = block.getText();
+////            IKI GAWE NGEMUNCULNO TULISAN E
+//            textTranslate.setTextSize(18);
+//            textTranslate.setText(txt);
+//        }
+//    }
 
     private void initMDataBooks(){
         mdata = new ArrayList<>();

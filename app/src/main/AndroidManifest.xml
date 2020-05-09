@@ -4,6 +4,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <meta-data
+        android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+        android:value="ocr" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -11,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SearchByScanResultActivity"></activity>
+        <activity android:name=".SearchActivity"></activity>
+        <activity android:name=".SearchByScanResultActivity" />
         <activity android:name=".LoginRegsiterActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -21,9 +26,5 @@
             </intent-filter>
         </activity>
     </application>
-
-    <meta-data
-        android:name="com.google.firebase.ml.vision.DEPENDENCIES"
-        android:value="ocr" />
 
 </manifest>
