@@ -58,24 +58,6 @@ public class MainActivity extends AppCompatActivity {
         initMDataBooks();
         setupBookAdapter();
 
-//        btnSearchByScan = findViewById(R.id.home_btn_scan);
-//        btnDetectText = findViewById( R.id.home_btn_scan );
-//
-//        btnSearchByScan.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                dispatchTakePictureIntent();
-//            }
-//        });
-//
-//        btnDetectText.setOnClickListener( new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                detectTxt();
-//            }
-//        } );
-
-
         botNav = findViewById(R.id.bottom_nav_container);
         botNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -125,58 +107,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-//    private void dispatchTakePictureIntent(){
-//        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        if(takePicture.resolveActivity(getPackageManager()) != null) {
-//            startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE); // Error?
-//        }
-//    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult( requestCode, resultCode, data );
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            imageBitmap = (Bitmap) extras.get( "data" );
-            imageView.setImageBitmap( imageBitmap );
-        }
-    }
 
     private void setupBookAdapter(){
         bookAdapter = new BookAdapter(mdata);
         rvBooks.setAdapter(bookAdapter);
     }
 
-//    private void detectTxt() {
-//        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(imageBitmap);
-//        FirebaseVisionTextRecognizer Detector = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
-//
-//        Detector.processImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
-//            @Override
-//            public void onSuccess(FirebaseVisionText firebaseVisionText) {
-//                processTxt(firebaseVisionText);
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//
-//            }
-//        });
-//    }
-//
-//    private void processTxt(FirebaseVisionText text) {
-//        List<FirebaseVisionText.TextBlock> blocks = text.getTextBlocks();
-//        if (blocks.size() == 0) {
-//            Toast.makeText(MainActivity.this, "No Text :(", Toast.LENGTH_LONG).show();
-//            return;
-//        }
-//        for (FirebaseVisionText.TextBlock block : text.getTextBlocks()) {
-//            String txt = block.getText();
-////            IKI GAWE NGEMUNCULNO TULISAN E
-//            textTranslate.setTextSize(18);
-//            textTranslate.setText(txt);
-//        }
-//    }
+
 
     private void initMDataBooks(){
         mdata = new ArrayList<>();
