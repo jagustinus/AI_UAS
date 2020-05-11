@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -33,30 +34,11 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     BottomNavigationView botNav;
 
-    Button btnSearchByScan;
-    Button btnDetectText;
-    private TextView textTranslate;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-
-    private RecyclerView rvBooks;
-    private BookAdapter bookAdapter;
-    private List<Book> mdata;
-    private Bitmap imageBitmap;
-    private ImageView imageView;
-
-    //Firebase
-    FirebaseFirestore fstore;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.appToolBar);
-
-        initBooks();
-        initMDataBooks();
-        setupBookAdapter();
 
         botNav = findViewById(R.id.bottom_nav_container);
         botNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -106,38 +88,4 @@ public class MainActivity extends AppCompatActivity {
         botNav.setSelectedItemId(R.id.home_menu_item_bottom_nav);
     }
 
-
-
-    private void setupBookAdapter(){
-        bookAdapter = new BookAdapter(mdata);
-        rvBooks.setAdapter(bookAdapter);
-    }
-
-
-
-    private void initMDataBooks(){
-        mdata = new ArrayList<>();
-
-//        fstore = FirebaseFirestore.getInstance();
-//        DocumentReference documentReference = fstore.collection("books").document();
-//        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-//
-//                Book book = new Book(documentSnapshot.getString("title"), documentSnapshot.getString("isbn"),
-//                        documentSnapshot.getString("shortDescription"), documentSnapshot.getString("longDescription"),
-//                        documentSnapshot.getString("thumbnailUrl"), ,
-//                        Integer.parseInt(documentSnapshot.getString("pageCount")), documentSnapshot.getString(""))
-//            }
-//        });
-//
-//        mdata.add();
-    }
-
-
-    private void initBooks(){
-        rvBooks = findViewById(R.id.main_rv_books);
-        rvBooks.setLayoutManager(new LinearLayoutManager(this));
-        rvBooks.setHasFixedSize(true);
-    }
 }

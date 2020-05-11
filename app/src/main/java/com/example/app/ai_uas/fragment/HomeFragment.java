@@ -7,9 +7,15 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,14 +25,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.app.ai_uas.R;
+import com.example.app.ai_uas.SearchActivity;
+import com.example.app.ai_uas.model.Book;
+import com.example.app.ai_uas.recyclerview.BookAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
@@ -44,6 +60,14 @@ public class HomeFragment extends Fragment {
     private Bitmap imageBitmap;
     private ImageView imageView;
 
+    private String currentImgPath;
+
+    private RecyclerView rvBooks;
+    private BookAdapter bookAdapter;
+    private List<Book> mdata;
+
+    private FirebaseFirestore db;
+
     public HomeFragment() {
 
     }
@@ -52,32 +76,70 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_home, container, false);
         btnSearchByScan =view.findViewById( R.id.home_btn_scan );
-        btnDetectText =view.findViewById( R.id.home_btn_detect );
-        textTranslate =view.findViewById( R.id.home_text_translate );
-        imageView =view.findViewById( R.id.imageView );
+
+
+        initBooks(view);
+        initMDataBooks();
+
+//        btnSearchByScan.setOnClickListener( new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                setupTempFile();
+//            }
+//        } );
 
         btnSearchByScan.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dispatchTakePictureIntent();
+                Intent activity2Intent = new Intent(getActivity(), SearchActivity.class);
+                startActivity(activity2Intent);
             }
         } );
 
-        btnDetectText.setOnClickListener( new View.OnClickListener() {
+        TextInputEditText searchBar = view.findViewById(R.id.home_txt_search);
+
+        searchBar.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View view) {
-                detectTxt();
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
             }
-        } );
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                bookAdapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         return view;
     }
 
+    private void setupTempFile() {
+        String fileName = "photoforai";
+        File storageDirectory = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        try {
+            File imgFile = File.createTempFile(fileName, ".jpg", storageDirectory);
+
+            currentImgPath = imgFile.getAbsolutePath();
+            Uri imgUri = FileProvider.getUriForFile(getActivity(), "com.example.app.ai_uas.fileprovider", imgFile);
+
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
+            this.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_IMAGE_CAPTURE = 199;
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -89,15 +151,13 @@ public class HomeFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult( requestCode, resultCode, data );
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Toast.makeText(getActivity(), "masuk",LENGTH_LONG).show();
-            Bundle extras = data.getExtras();
-            imageBitmap = (Bitmap) extras.get( "data" );
-            imageView.setImageBitmap( imageBitmap );
-//            BitmapFactory.Options options = new BitmapFactory.Options();
-//            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-//            Bitmap bitmap = BitmapFactory.decodeFile("imageBitmap", options);
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && data.getData()!=null) {
+            Toast.makeText(getActivity(), currentImgPath,LENGTH_LONG).show();
+            Bitmap img = BitmapFactory.decodeFile(currentImgPath);
+            imageView.setImageBitmap( img );
         }
+
 
     }
 
@@ -118,10 +178,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-
-
-
-
     public void processTxt(FirebaseVisionText text) {
 
         List<FirebaseVisionText.TextBlock> blocks = text.getTextBlocks();
@@ -135,6 +191,50 @@ public class HomeFragment extends Fragment {
             textTranslate.setTextSize(18);
             textTranslate.setText(txt);
         }
+    }
+
+
+    private void initBooks(View view){
+        rvBooks = view.findViewById(R.id.home_rv_books);
+        rvBooks.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvBooks.setHasFixedSize(true);
+    }
+    private void initMDataBooks() {
+
+
+        mdata = new ArrayList<>();
+        bookAdapter = new BookAdapter(mdata);
+        rvBooks.setAdapter(bookAdapter);
+        db = FirebaseFirestore.getInstance();
+        db.collection("books").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+                        if(!queryDocumentSnapshots.isEmpty()){
+
+                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+
+                            for(DocumentSnapshot d : list){
+
+                                Book p = d.toObject(Book.class);
+                                mdata.add(p);
+
+                            }
+
+                            bookAdapter.notifyDataSetChanged();
+
+                        }
+                    }
+
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getActivity(),e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+
+                });
     }
 
 }

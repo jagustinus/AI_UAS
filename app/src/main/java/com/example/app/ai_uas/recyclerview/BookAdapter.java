@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,14 +18,17 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.app.ai_uas.R;
 import com.example.app.ai_uas.model.Book;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class BookAdapter extends RecyclerView.Adapter<BookAdapter.bookViewHolder> {
+public class BookAdapter extends RecyclerView.Adapter<BookAdapter.bookViewHolder> implements Filterable {
 
     List<Book> mData;
+    List<Book> mDataFiltered;
 
     public BookAdapter(List<Book> mData) {
         this.mData = mData;
+        this.mDataFiltered = mData;
     }
 
 
@@ -37,18 +42,58 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.bookViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull bookViewHolder holder, int position) {
+        Book book = mDataFiltered.get(position);
 
         Glide.with(holder.itemView.getContext())
-                .load(mData.get(position).getDrawableResources())
+                .load(mDataFiltered.get(position).getThumbnailUrl())
                 .transform(new CenterCrop(), new RoundedCorners(16))
                 .into(holder.imgBook);
+
+
+
+        holder.title.setText(book.getTitle());
+        holder.author.setText(book.getTitle());
+        holder.pages.setText(String.valueOf(book.getPageCount()));
+        holder.published.setText(book.getIsbn());
 
 
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mDataFiltered.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String key = constraint.toString();
+                if(key.isEmpty()){
+                    mDataFiltered = mData;
+                } else{
+                    List<Book> lstFiltered = new ArrayList<>();
+                    for (Book row : mData){
+                        if(row.getTitle().toLowerCase().contains(key.toLowerCase())){
+                            lstFiltered.add(row);
+                        }
+                    }
+
+                    mDataFiltered = lstFiltered;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mDataFiltered;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                mDataFiltered = (List<Book>) results.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
 
@@ -74,3 +119,4 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.bookViewHolder
     }
 
 }
+
